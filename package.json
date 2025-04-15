@@ -1,0 +1,17 @@
+{
+  "name": "recipee-app",
+  "version": "1.0.0",
+  "description": "A beautiful recipe sharing platform",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": ["recipe", "food", "cooking", "sharing"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "prom-client": "^14.2.0"
+  }
+}

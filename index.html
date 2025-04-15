@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Haven - Share & Discover Delicious Recipes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo">Recipe Haven</a>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#submit">Submit Recipe</a></li>
+                    <li><a href="#recipes">View Recipes</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Share Your Culinary Masterpieces</h1>
+            <p>Join our community of passionate home cooks, share your favorite recipes, rate dishes, and discover new culinary inspirations from around the world!</p>
+            <a href="#submit" class="btn">Share Your Recipe</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Recipe Haven?</h2>
+            <div class="features-container">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Share Your Recipes</h3>
+                    <p>Easily share your favorite recipes with our community. Include ingredients, instructions, and your personal rating.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Rate & Review</h3>
+                    <p>Rate recipes on a scale of 1-5 and help others discover the best dishes in our collection.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Discover New Dishes</h3>
+                    <p>Browse through our community-submitted recipes and find your next culinary adventure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Submission Form -->
+    <section id="submit" class="form-section">
+        <div class="container">
+            <h2 class="section-title">Share Your Recipe</h2>
+            <div class="form-container">
+                <div class="form-group">
+                    <input id="recipeName" type="text" placeholder="Recipe Name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <textarea id="ingredients" placeholder="Ingredients (comma-separated)" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <input id="rating" type="number" min="1" max="5" placeholder="Rating (1-5)" class="form-control">
+                </div>
+                <button onclick="submitRecipe()" class="form-btn">Submit Recipe</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recipe List -->
+    <section id="recipes" class="recipes-section">
+        <div class="container">
+            <h2 class="section-title">Community Recipes</h2>
+            <div id="recipeList" class="recipe-grid"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; 2025 Recipe Haven. All rights reserved.</p>
+            <p>Powered by AWS Kubernetes & Prometheus</p>
+        </div>
+    </footer>
+
+    <!-- Frontend JavaScript -->
+    <script>
+        let recipes = [];
+
+        async function submitRecipe() {
+            const name = document.getElementById('recipeName').value;
+            const ingredients = document.getElementById('ingredients').value.split(',').map(i => i.trim());
+            const rating = parseInt(document.getElementById('rating').value);
+
+            if (name && ingredients.length > 0 && rating >= 1 && rating <= 5) {
+                const recipe = { name, ingredients, rating, timestamp: new Date().toISOString() };
+                recipes.push(recipe);
+
+                await fetch('/recipes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(recipe)
+                });
+
+                document.getElementById('recipeName').value = '';
+                document.getElementById('ingredients').value = '';
+                document.getElementById('rating').value = '';
+                updateRecipeList();
+            } else {
+                alert('Please fill all fields correctly!');
+            }
+        }
+
+        function updateRecipeList() {
+            const list = document.getElementById('recipeList');
+            list.innerHTML = '';
+            recipes.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                card.innerHTML = `
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">${r.name}</h3>
+                        <p class="recipe-info">Ingredients: ${r.ingredients.join(', ')}</p>
+                        <p class="recipe-info">Rating: ${r.rating}/5</p>
+                        <p class="recipe-timestamp">Submitted: ${new Date(r.timestamp).toLocaleString()}</p>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+    </script>
